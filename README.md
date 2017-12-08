@@ -1,2 +1,2 @@
 # SCD_Practica3
-me da miedo que no pueda acceder a el desde otros ordendores con comodidad.
+Me da miedo que no pueda acceder a mis prácticas desde otros ordenadores con comodidad.en caso d que no tenga ordenador).
