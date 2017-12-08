@@ -104,7 +104,7 @@ void funcion_buffer()
    {
       MPI_Recv( &valor, 1, MPI_INT, id_productor,  0, MPI_COMM_WORLD, &estado );
       cout << "Buffer ha recibido valor " << valor << endl ;
-
+ 
       MPI_Recv ( &peticion, 1, MPI_INT, id_consumidor, 0, MPI_COMM_WORLD, &estado );
 
       cout << "Buffer va a enviar valor " << valor << endl ;
@@ -116,6 +116,7 @@ void funcion_buffer()
 
 int main( int argc, char *argv[] )
 {
+
   int id_propio, num_procesos_actual; // ident. propio, núm. de procesos
 
   MPI_Init( &argc, &argv );
