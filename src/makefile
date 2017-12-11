@@ -29,4 +29,4 @@ fc: filosofos-cam_exe
 	$(compilador) $(flagsc) -o $@ $<
 
 clean:
-	rm -rf *_exe *.dSYM
+	rm -rf *_exe *.dSYM *~ \#*
