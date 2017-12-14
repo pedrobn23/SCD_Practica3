@@ -108,7 +108,7 @@ void funcion_camarero( int id )
 
   while( true )
     {
-      if (s<5)
+      if (s<4)
 	MPI_Recv ( &valor, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &estado );
       else
 	MPI_Recv ( &valor, 1, MPI_INT, MPI_ANY_SOURCE, etiq_levantarse, MPI_COMM_WORLD, &estado );
