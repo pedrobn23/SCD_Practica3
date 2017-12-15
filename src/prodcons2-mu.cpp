@@ -31,6 +31,7 @@ const int
   num_procesos_esperado = nc+np+1 ,
   num_items             = nc*np*2 , 
   item_por_productor    = num_items/np ,
+  item_por_consumidor   = num_items/nc ,
   tam_vector            = 10;
 
 // Etiquetas
@@ -92,7 +93,7 @@ void consumir( int valor_cons , int num_consumidor )
 //Productor
 void funcion_productor( int num_productor )
 {
-  for ( unsigned int i= 0 ; i < num_items ; i++ )
+  for ( unsigned int i= 0 ; i < item_por_productor ; i++ )
     {
       //Producir valor
       int valor_prod = producir( num_productor );
@@ -110,7 +111,7 @@ void funcion_consumidor( int num_consumidor )
   int peticion, valor_rec = 1 ;
   MPI_Status  estado ;
 
-  for( unsigned int i=0 ; i < num_items; i++ )
+  for( unsigned int i=0 ; i < item_por_consumidor ; i++ )
     {
       //Se comuníca con el buffer
       MPI_Ssend( &peticion,  1, MPI_INT, id_buffer, etiq_cons, MPI_COMM_WORLD);
