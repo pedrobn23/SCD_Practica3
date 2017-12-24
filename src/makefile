@@ -1,5 +1,5 @@
 .SUFFIXES:
-.PHONY:    pc,pc2,pcm,fp,f,fi,fc,clean
+.PHONY:    pc,pc2,pcm,fp,f,fi,fc,fe,clean
 
 compilador := mpicxx -std=c++11
 flagsc     := -g -Wall
@@ -23,6 +23,9 @@ f: filosofos_exe
 	mpirun -np 10 ./$<
 
 fc: filosofos-cam_exe
+	mpirun -np 11 ./$<
+
+fe: filosofos-exm_exe
 	mpirun -np 11 ./$<
 
 %_exe: %.cpp

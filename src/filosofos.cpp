@@ -23,8 +23,7 @@ using namespace std;
 using namespace std::this_thread ;
 using namespace std::chrono ;
 
-const int
-num_filosofos = 5 ,
+const int num_filosofos = 5 ,
   num_procesos  = 2*num_filosofos ;
 
 

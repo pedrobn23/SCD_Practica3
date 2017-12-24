@@ -45,10 +45,12 @@ template< int min, int max > int aleatorio()
 
 // ---------------------------------------------------------------------
 
+//*********************************************************************
+// Función que gestiona el comportamiento de los filósofos
 void funcion_filosofos( int id )
 {
-  int id_ten_izq = (id+1)              % num_procesos, //id. tenedor izq.
-    id_ten_der = (id+num_procesos-1) % num_procesos; //id. tenedor der.
+  int id_ten_izq = (id+1)                % (num_procesos-1), //id. tenedor izq.
+    id_ten_der = (id+(num_procesos-1)-1) % (num_procesos-1); //id. tenedor der.
 
   int peticion=0;
 
@@ -84,6 +86,9 @@ void funcion_filosofos( int id )
 }
 // ---------------------------------------------------------------------
 
+
+//*********************************************************************
+// Función que gestiona el comportamiento de los tenedores
 void funcion_tenedores( int id )
 {
   int valor, id_filosofo ;  // valor recibido, identificador del filósofo
@@ -93,30 +98,63 @@ void funcion_tenedores( int id )
     {
       MPI_Recv ( &valor, 1, MPI_INT, MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &estado );
       id_filosofo = estado.MPI_SOURCE;// ...... guardar en 'id_filosofo' el id. del emisor (completar)
-      cout <<"Ten. " <<id <<" ha sido cogido por filo. " <<id_filosofo <<endl;
+      cout <<"          Ten. " <<id <<" ha sido cogido por filo. " <<id_filosofo <<endl;
 
       MPI_Recv ( &valor, 1, MPI_INT, id_filosofo, 0, MPI_COMM_WORLD, &estado );
-      cout <<"Ten. "<< id<< " ha sido liberado por filo. " <<id_filosofo <<endl ;
+      cout <<"          Ten. "<< id<< " ha sido liberado por filo. " <<id_filosofo <<endl ;
     }
 }
 // ---------------------------------------------------------------------
 
+
+//*********************************************************************
+// Función que gestiona el comportamiento del camarero
 void funcion_camarero( int id )
 {
-  int s = 0, valor ;  // valor recibido
-  MPI_Status estado ;       // metadatos de las dos recepciones
-
+  int s = 0, valor, hay_mens, id_recibido, etiq_aceptable ;  // valor recibido
+  MPI_Status estado_recibido, estado_sondeado ;       // metadatos de las dos recepciones
+  
+  
   while( true )
     {
-      if (s<4)
-	MPI_Recv ( &valor, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &estado );
-      else
-	MPI_Recv ( &valor, 1, MPI_INT, MPI_ANY_SOURCE, etiq_levantarse, MPI_COMM_WORLD, &estado );
+      //El camarero inicializa el id que espera a 0, y que no hay mensaje
+      id_recibido = 0;
+      hay_mens = 0;
+
+      //El camarero piensa como está el aforo.
+      if (s < num_filosofos-1) {
+	etiq_aceptable = MPI_ANY_TAG;
+	cout << "     Camarero: Voy a aceptar cualquier petición." << endl;
+      }
+      else {
+	etiq_aceptable = etiq_levantarse;
+	cout << "     Camarero: Voy a esperar a que se vacie un poco la mesa" << endl;
+      }
+ 
+
+      //El camarero prueba si hay peticiones de los filosofos, empezando por el 0 y en bucle
+      //hasta que encuentre una satisfactoria ( cuando haya un mensaje )
+      while ( !hay_mens )
+	{
+	  // Comento la comprobación para hacer legible la salida. 
+	  //  cout << id_recibido << ", " ;
+	  MPI_Iprobe( id_recibido, etiq_aceptable, MPI_COMM_WORLD, &hay_mens, &estado_sondeado);
+	  id_recibido = (id_recibido+2)%(num_filosofos*2) ;
+	}
+
+      cout << "     Camarero acepta petición de filósofo " << estado_sondeado.MPI_SOURCE << endl;
+
       
-      if ( estado.MPI_TAG == etiq_sentarse )	    
-	s++;
+      
+      // Recive el mensaje del filósofo, dandole acceso a la mesa
+      MPI_Recv ( &valor, 1, MPI_INT, estado_sondeado.MPI_SOURCE, etiq_aceptable, MPI_COMM_WORLD, &estado_recibido );
+
+
+      // Actualiza el aforo
+      if ( estado_recibido.MPI_TAG == etiq_sentarse )	    
+      	s++;
       else
-	s--;
+      	s--;
     }
 }
 
