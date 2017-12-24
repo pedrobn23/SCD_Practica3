@@ -22,11 +22,10 @@ using namespace std;
 using namespace std::this_thread ;
 using namespace std::chrono ;
 
-const int
-num_filosofos = 5 ,
-  num_procesos  = 2*num_filosofos+1 ,
-  id_camarero = 2*num_filosofos ,
-  etiq_sentarse = 1 ,
+const int num_filosofos = 5 ,
+  num_procesos    = 2*num_filosofos+1 ,
+  id_camarero     = 2*num_filosofos ,
+  etiq_sentarse   = 1 ,
   etiq_levantarse = 2 ;
 
 
