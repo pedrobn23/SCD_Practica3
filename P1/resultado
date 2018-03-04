@@ -1,0 +1,66 @@
+begins  SemaphoreRepr::SemaphoreRepr( int == 0)
+begins  SemaphoreRepr::SemaphoreRepr( int == 0)
+begins  SemaphoreRepr::SemaphoreRepr( int == 0)
+begins  SemaphoreRepr::SemaphoreRepr( int == 1)
+begins  SemaphoreRepr::SemaphoreRepr( int == 0)
+--------------------------------------------------------
+Problema de los fumadores.
+--------------------------------------------------------
+*********** Ha llegado el paquete. ***********
+Estanquero sirve porducto: 1
+Fumador 1 retira el producto.
+Fumador 1  : empieza a fumar (67 milisegundos)
+Estanquero sirve porducto: 0
+Fumador 0 retira el producto.
+Fumador 0  : empieza a fumar (71 milisegundos)
+Estanquero sirve porducto: 0
+Fumador 1  : termina de fumar, comienza espera de ingrediente.
+Fumador 0  : termina de fumar, comienza espera de ingrediente.
+Fumador 0 retira el producto.
+Fumador 0  : empieza a fumar (77 milisegundos)
+Estanquero sirve porducto: 0
+Fumador 0  : termina de fumar, comienza espera de ingrediente.
+Fumador 0 retira el producto.
+Fumador 0  : empieza a fumar (42 milisegundos)
+Estanquero sirve porducto: 1
+Fumador 1 retira el producto.
+Fumador 1  : empieza a fumar (166 milisegundos)
+Estanquero sirve porducto: 0
+Fumador 0  : termina de fumar, comienza espera de ingrediente.
+Fumador 0 retira el producto.
+Fumador 0  : empieza a fumar (171 milisegundos)
+Estanquero sirve porducto: 1
+Fumador 1  : termina de fumar, comienza espera de ingrediente.
+Fumador 1 retira el producto.
+Fumador 1  : empieza a fumar (123 milisegundos)
+Estanquero sirve porducto: 1
+Fumador 0  : termina de fumar, comienza espera de ingrediente.
+Fumador 1  : termina de fumar, comienza espera de ingrediente.
+Fumador 1 retira el producto.
+Fumador 1  : empieza a fumar (183 milisegundos)
+Estanquero sirve porducto: 1
+Fumador 1  : termina de fumar, comienza espera de ingrediente.
+Fumador 1 retira el producto.
+Fumador 1  : empieza a fumar (159 milisegundos)
+Estanquero sirve porducto: 0
+Fumador 0 retira el producto.
+Fumador 0  : empieza a fumar (94 milisegundos)
+*********** Ha llegado el paquete. ***********
+Estanquero sirve porducto: 1
+Fumador 0  : termina de fumar, comienza espera de ingrediente.
+Fumador 1  : termina de fumar, comienza espera de ingrediente.
+Fumador 1 retira el producto.
+Fumador 1  : empieza a fumar (32 milisegundos)
+Estanquero sirve porducto: 1
+Fumador 1  : termina de fumar, comienza espera de ingrediente.
+Fumador 1 retira el producto.
+Fumador 1  : empieza a fumar (123 milisegundos)
+Estanquero sirve porducto: 1
+Fumador 1  : termina de fumar, comienza espera de ingrediente.
+Fumador 1 retira el producto.
+Fumador 1  : empieza a fumar (156 milisegundos)
+Estanquero sirve porducto: 1
+Fumador 1  : termina de fumar, comienza espera de ingrediente.
+Fumador 1 retira el producto.
+Fumador 1  : empieza a fumar (132 milisegundos)
+Estanquero sirve porducto: 1

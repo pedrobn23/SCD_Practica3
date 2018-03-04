@@ -1,0 +1,227 @@
+#include <iostream>
+#include <cassert>
+#include <thread>
+#include <mutex>
+#include <random> // dispositivos, generadores y distribuciones aleatorias
+#include <chrono> // duraciones (duration), unidades de tiempo
+#include "HoareMonitor.hpp"
+#include <vector>
+
+
+using namespace std ;
+using namespace HM ;
+
+mutex mtx; //candado de escritura en pantalla
+
+const int num_clientes = 3,
+  num_barberos = 1,
+  num_sillas = 5; 
+//En caso de no haber límite: 2147483647 (valo máximo de int)
+
+//**********************************************************************
+// plantilla de función para generar un entero aleatorio uniformemente
+// distribuido entre dos valores enteros, ambos incluidos
+// (ambos tienen que ser dos constantes, conocidas en tiempo de compilación)
+//----------------------------------------------------------------------
+
+template< int min, int max > int aleatorio()
+{
+  static default_random_engine generador( (random_device())() );
+  static uniform_int_distribution<int> distribucion_uniforme( min, max ) ;
+  return distribucion_uniforme( generador );
+}
+
+
+//**********************************************************************
+// Monitor que representa la barbería
+class Barberia : public HoareMonitor
+{
+private:
+  int sig_barbero;
+  CondVar barbero;
+  CondVar clientes;
+  CondVar fin_pelado[num_barberos];
+ 
+public:
+  Barberia(  );
+  
+  void avisarCliente( int n_barber );
+  void irBarbero( int n_client );
+  void finCorte( int cliente );
+} ;
+
+
+Barberia::Barberia(  )
+{
+  sig_barbero = -1;
+  barbero = newCondVar();
+  clientes = newCondVar();
+  for (int i = 0; i < num_barberos; ++i )
+    fin_pelado[i] = newCondVar();
+}
+
+void Barberia::avisarCliente( int n_barbero )
+{
+  if (clientes.get_nwt() == 0)
+    {
+      mtx.lock();
+      cout << "Barbero " << n_barbero << ": Espera Cliente." << endl; 
+      mtx.unlock();
+
+      barbero.wait();
+      sig_barbero = n_barbero;
+    }
+  
+  else
+    {
+      sig_barbero = n_barbero;
+      clientes.signal();
+    }
+ 
+  mtx.lock();
+  cout << "Barbero " << n_barbero << ": Recibe cliente." << endl; 
+  mtx.unlock();
+
+}
+
+void Barberia::irBarbero( int n_client )
+{
+  if (clientes.get_nwt() <= num_sillas)
+    {
+      if (barbero.get_nwt() != 0)
+	{
+	  mtx.lock();
+	  cout << "Cliente " << n_client << ": Despierta barbero." << endl; 
+	  mtx.unlock();
+
+	  barbero.signal();
+	}
+      else 
+	{
+	  mtx.lock();
+	  cout << "Cliente " << n_client << ": Espera en la salita." << endl; 
+	  mtx.unlock();
+
+	  clientes.wait();
+      	}
+
+      mtx.lock();
+      cout << "Cliente " << n_client << ": Pelandose." << endl; 
+      mtx.unlock();
+
+      fin_pelado[sig_barbero].wait();
+
+      mtx.lock();
+      cout << "Cliente " << n_client << ": Pelado terminado." << endl; 
+      mtx.unlock();
+    }
+  
+  else
+    {
+      mtx.lock();
+      cout << "Cliente " << n_client << ": no pude pelarme (sala llena)." << endl; 
+      mtx.unlock();
+    }
+}
+
+void Barberia::finCorte( int n_barbero )
+{
+ 
+  // mtx.lock();
+  // cout << "Barbero " << n_barbero << ": Corte Teminado." << endl; 
+  // mtx.unlock();
+
+  fin_pelado[n_barbero].signal();
+}
+
+//-------------------------------------------------------------------------
+
+//*************************************************************************
+//función que simula la acción de pelar.
+
+void cortarPelo(  )
+{
+  //Calcula cuando va a tardar en pelar
+  chrono::milliseconds duracion_pelado( aleatorio<20,200>() );
+
+  //Informa de las acciones del barbero
+
+  mtx.lock();
+  cout << "Barbero afeita cliente." << endl;
+  mtx.unlock();
+  
+  this_thread::sleep_for( duracion_pelado );
+}
+//------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------
+
+
+//Función para esperar fuera
+void esperarPelo ( int n_cliente )
+{
+  //Calcula cuando va a tardar en pelar
+  chrono::milliseconds duracion_crecimiento( aleatorio<20,200>() );
+
+  this_thread::sleep_for( duracion_crecimiento );
+
+  mtx.lock();
+  cout << "Cliente: " << n_cliente << ": Es hora de pelarse." << endl;
+  mtx.unlock();
+}
+
+//************************************************************************
+//Funciones para las hebras
+
+
+void funcion_hebra_barbero( MRef<Barberia> monitor , int n_barbero )
+{
+  while( true )
+    {
+      monitor->avisarCliente( n_barbero );
+      cortarPelo();
+      monitor->finCorte ( n_barbero );
+    }
+}
+
+
+void funcion_hebra_cliente( MRef<Barberia> monitor, int n_cliente )
+{
+  while ( true )
+    {
+      monitor->irBarbero( n_cliente );
+      esperarPelo( n_cliente );
+    }
+}
+//----------------------------------------------------------------------------
+
+int main()
+{
+  cout << "--------------------------------------------------------" << endl
+       << "Problema de la barbería" << endl
+       << "--------------------------------------------------------" << endl
+       << flush ;
+
+  auto monitor = Create<Barberia>( );
+
+  thread hebra_barbero[num_barberos];
+  thread hebra_cliente[num_clientes];
+
+  for ( int i = 0; i < num_barberos; ++i ) 
+    hebra_barbero[i] = thread ( funcion_hebra_barbero, monitor, i );
+    
+  for ( int i = 0; i < num_clientes; ++i )
+    hebra_cliente[i] = thread ( funcion_hebra_cliente, monitor, i );
+
+  for ( int i = 0; i < num_barberos; ++i ) 
+      hebra_barbero[i].join();
+
+  for ( int i = 0; i < num_clientes; ++i)
+    hebra_cliente[i].join();
+  
+  cout << "-------------------------------------------------------" << endl
+       << "FIN"
+       << "-------------------------------------------------------" << endl;
+}
+

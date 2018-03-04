@@ -1,0 +1,19 @@
+In file included from /usr/include/c++/5/thread:39:0,
+                 from prodcons-FIFO-Var.cpp:3:
+/usr/include/c++/5/functional: In instantiation of ‘struct std::_Bind_check_arity<void (*)(int)>’:
+/usr/include/c++/5/functional:1538:12:   required from ‘struct std::_Bind_simple_helper<void (&)(int)>’
+/usr/include/c++/5/functional:1552:5:   required by substitution of ‘template<class _Callable, class ... _Args> typename std::_Bind_simple_helper<_Func, _BoundArgs>::__type std::__bind_simple(_Callable&&, _Args&& ...) [with _Callable = void (&)(int); _Args = {}]’
+/usr/include/c++/5/thread:137:59:   required from ‘std::thread::thread(_Callable&&, _Args&& ...) [with _Callable = void (&)(int); _Args = {}]’
+prodcons-FIFO-Var.cpp:182:61:   required from here
+/usr/include/c++/5/functional:1410:7: error: static assertion failed: Wrong number of arguments for function
+       static_assert(sizeof...(_BoundArgs) == sizeof...(_Args),
+       ^
+/usr/include/c++/5/functional: In instantiation of ‘struct std::_Bind_simple<void (*())(int)>’:
+/usr/include/c++/5/thread:137:59:   required from ‘std::thread::thread(_Callable&&, _Args&& ...) [with _Callable = void (&)(int); _Args = {}]’
+prodcons-FIFO-Var.cpp:182:61:   required from here
+/usr/include/c++/5/functional:1505:61: error: no type named ‘type’ in ‘class std::result_of<void (*())(int)>’
+       typedef typename result_of<_Callable(_Args...)>::type result_type;
+                                                             ^
+/usr/include/c++/5/functional:1526:9: error: no type named ‘type’ in ‘class std::result_of<void (*())(int)>’
+         _M_invoke(_Index_tuple<_Indices...>)
+         ^
